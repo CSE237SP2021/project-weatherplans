@@ -33,7 +33,7 @@ public class WeatherApi {
 	public WeatherApi() {}
 
 	/* *********************************************************************************
-	 *  The following methods fetch the current weather from a specific identifier.
+	 *  The following methods fetch the current weather using a specific identifier.
 	 */
 	public JSONObject fetchCurrentWeatherByCityName(String cityName) {
 		String url = constructUrl(ApiFetchMethod.CITYNAME, WeatherApi.currentWeatherBaseUrl, cityName);
