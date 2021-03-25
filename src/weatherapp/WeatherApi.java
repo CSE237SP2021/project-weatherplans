@@ -20,76 +20,88 @@ import org.json.JSONObject;
  * 		zipcode
  * 
  * TODO: Optional API Parameters
- * 		Specify Celsius or Fahrenheit
- * 
- * Expected Usage:
- * 		WeatherApi wapi = new WeatherApi("35/139", ApiFetchMethod.COORDINATES);
-		JSONObject data = wapi.fetchData();
+ * 		Specify Celsius or Fahrenheit or Kelvin
  * 
  * @author evan
  *
  */
 public class WeatherApi {
 	private static String API_KEY = "b1bf4a07bd8dca7fa3d39153cab10847";
-	private static String baseUrl = "http://api.openweathermap.org/data/2.5/weather?";
-	
-	// Required API Parameters
-	private String identifier;
-	private ApiFetchMethod method;
-	
-	// Optional API Parameters (Unused currently)
-	private String units;
+	private static String forecastBaseUrl = "http://api.openweathermap.org/data/2.5/forecast?";
+	private static String currentWeatherBaseUrl = "http://api.openweathermap.org/data/2.5/weather?";
 
-	/**
-	 * 
-	 * @param identifier - The identifier for the designated search method.
-	 * 						For example:
-	 * 						If you're searching by CITYNAME, it may be "London".
-	 * 						If you're searching by CITYID, it may be "2172797" for the city Cairns.
-	 * 						If you're searching by COORDINATES, it may be in the form of "Latitude/Longitude" such as "35/139".
-	 * 						If you're searching by ZIPCODE, it may be in the form of "77401" for Bellaire, Texas
-	 * @param searchMethod - How you would like to search for a location
+	public WeatherApi() {}
+
+	/* *********************************************************************************
+	 *  The following methods fetch the current weather from a specific identifier.
 	 */
-	public WeatherApi(String identifier, ApiFetchMethod searchMethod) {
-		this.identifier = identifier;
-		this.method = searchMethod;
+	public JSONObject fetchCurrentWeatherByCityName(String cityName) {
+		String url = constructUrl(ApiFetchMethod.CITYNAME, WeatherApi.currentWeatherBaseUrl, cityName);
+		return readJsonFromUrl(url);
+	}
+	public JSONObject fetchCurrentWeatherByCityId(String cityId) {
+		String url = constructUrl(ApiFetchMethod.CITYID, WeatherApi.currentWeatherBaseUrl, cityId);
+		return readJsonFromUrl(url);
+	}
+	public JSONObject fetchCurrentWeatherByCoordinates(Number latitude, Number longitude) {
+		String coordinateString = latitude.toString() + "/" + longitude.toString();
+		String url = constructUrl(ApiFetchMethod.COORDINATES, WeatherApi.currentWeatherBaseUrl, coordinateString);
+		return readJsonFromUrl(url);
+	}
+	public JSONObject fetchCurrentWeatherByZipcode(String zipcode) {
+		String url = constructUrl(ApiFetchMethod.ZIPCODE, WeatherApi.currentWeatherBaseUrl, zipcode);
+		return readJsonFromUrl(url);
+	}
+	
+	
+	/* *********************************************************************************
+	 * The following methods fetch the forecast for the next 5 days.
+	 * There is data for every 3 hr step.
+	 */
+	public JSONObject fetchForecastByCityName(String cityName) {
+		String url = constructUrl(ApiFetchMethod.CITYNAME, WeatherApi.forecastBaseUrl, cityName);
+		return readJsonFromUrl(url);
+	}
+	public JSONObject fetchForecastByCityId(String cityId) {
+		String url = constructUrl(ApiFetchMethod.CITYID, WeatherApi.forecastBaseUrl, cityId);
+		return readJsonFromUrl(url);
+	}
+	public JSONObject fetchForecastByCoordinates(Number latitude, Number longitude) {
+		String coordinateString = latitude.toString() + "/" + longitude.toString();
+		String url = constructUrl(ApiFetchMethod.COORDINATES, WeatherApi.forecastBaseUrl, coordinateString);
+		return readJsonFromUrl(url);
+	}
+	public JSONObject fetchForecastByZipcode(String zipcode) {
+		String url = constructUrl(ApiFetchMethod.ZIPCODE, WeatherApi.forecastBaseUrl, zipcode);
+		return readJsonFromUrl(url);
 	}
 	
 	/**
-	 * Makes an HTTP request to the OpenWeather API and returns the JSON.
-	 * @return - the resultant JSON
+	 * Constructs a URL that the OpenWeather API will accept.
+	 * @param fetchMethod - Whether we are searching by city id, city name, latitude/longitude, or zipcode
+	 * @param baseUrl 
+	 * @param identifier - The value(s) used to find the location whose weather we want
+	 * @return - A valid url for the OpenWeather API
 	 */
-	public JSONObject fetchData() {
-		String url = this.constructUrl();
-		JSONObject data = null;
-		try {
-			data = readJsonFromUrl(url);
-		} catch (JSONException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return data;
-	};
-	
-	private String constructUrl() {
-		String url = this.baseUrl;
-		switch (this.method) {
+	private String constructUrl(ApiFetchMethod fetchMethod, String baseUrl, String identifier) {
+		String url = baseUrl;
+		switch (fetchMethod) {
 		case CITYNAME:
-			url += "q=" + this.identifier;
+			url += "q=" + identifier;
 			break;
 		case CITYID:
-			url += "id=" + this.identifier;
+			url += "id=" + identifier;
 			break;
 		case COORDINATES:
-			CoordinatePair coords = new CoordinatePair(this.identifier);
+			CoordinatePair coords = new CoordinatePair(identifier);
 			url += "lat=" + coords.latitude;
 			url += "&lon=" + coords.longitude;
 			break;
 		case ZIPCODE:
-			url += "zip=" + this.identifier;
+			url += "zip=" + identifier;
 			break;
 		default:
-			throw new IllegalArgumentException("Unexpected value: " + this.method);
+			throw new IllegalArgumentException("Unexpected value: " + fetchMethod);
 		}
 		
 		url = appendApiKey(url);
@@ -97,10 +109,11 @@ public class WeatherApi {
 	}
 	
 	private String appendApiKey(String url) {
-		return url += "&appid=" + this.API_KEY;
+		return url += "&appid=" + WeatherApi.API_KEY;
 	}
 	
 	// https://stackoverflow.com/questions/4308554/simplest-way-to-read-json-from-a-url-in-java
+	//Extracts all of the text stored in a Reader combined into a single String.
 	private static String readAll(Reader rd) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		int cp;
@@ -109,20 +122,31 @@ public class WeatherApi {
 		}
 		return sb.toString();
 	}
-	public static JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
-		InputStream is = new URL(url).openStream();
+	/**
+	 * Given a URL, tries to extract a JSONObject from the response.
+	 * @param url
+	 * @return - Tries to parse and return a JSONObject. If any errors occur, returns null.
+	 */
+	private static JSONObject readJsonFromUrl(String url) {
 		try {
-			BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-			String jsonText = readAll(rd);
-			JSONObject json = new JSONObject(jsonText);
-			return json;
-		} finally {
-			is.close();
+			InputStream is = new URL(url).openStream();
+			try (is){
+				BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+				String jsonText = readAll(rd);
+				JSONObject json = new JSONObject(jsonText);
+				return json;
+			}
+		} catch (JSONException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return null;
+		
 	}
 	
 	/**
-	 * Responsible for parsing a coordinate string and returning the latitude and longitude.
+	 * Responsible for parsing a coordinate string in the form "latitude/longitude"
+	 * and returning the values as a struct.
 	 * @author evan
 	 *
 	 */
