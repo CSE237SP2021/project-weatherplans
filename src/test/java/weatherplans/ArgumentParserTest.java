@@ -46,9 +46,10 @@ class ArgumentParserTest {
 		String[]testZip = {"-zipcode", "63130"};
 		ArrayList<String> correctZip = new ArrayList<String>();
 		correctZip.add("63130");
+		
 		ArgumentParser parser = new ArgumentParser();
 		ParseResults results = parser.parse(testZip);
-		System.out.println(results);
+
 		assertEquals(ApiFetchMethod.ZIPCODE,results.locType);
 		assertEquals(correctZip,results.arguments);
 	}
@@ -58,8 +59,10 @@ class ArgumentParserTest {
 		ArrayList<Number> correctCoord = new ArrayList<Number>();
 		correctCoord.add(38.6669);
 		correctCoord.add(-90.3225);
+		
 		ArgumentParser parser = new ArgumentParser();
 		ParseResults results = parser.parse(testCoord);
+		
 		assertEquals(ApiFetchMethod.COORDINATES,results.locType);
 		assertEquals(correctCoord,results.coords);
 	}

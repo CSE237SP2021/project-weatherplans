@@ -21,7 +21,7 @@ public class menu {
 			data = wapi.fetchCurrentWeatherByCityId(results.getArgAt(0));
 			break;
 		case COORDINATES:
-			data = wapi.fetchForecastByCoordinates(results.getCoordAt(0),results.getCoordAt(1));
+			data = wapi.fetchCurrentWeatherByCoordinates(results.getCoordAt(0),results.getCoordAt(1));
 			break;
 		case ZIPCODE:
 			data = wapi.fetchCurrentWeatherByZipcode(results.getArgAt(0));
