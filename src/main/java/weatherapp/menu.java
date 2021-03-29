@@ -5,6 +5,7 @@ import weatherapp.ArgumentParser;
 public class menu {
 
 	public static void main(String[] args) {
+
 		ArgumentParser parser = new ArgumentParser();
 		ParseResults results = parser.parse(args);
 		WeatherApi wapi = new WeatherApi();
@@ -12,6 +13,7 @@ public class menu {
 		switch (results.locType) {
 		case INVALID:
 			System.err.println("No arguments found"); //maybe change this case in the future in case of quick weather forecast retrieval
+      break;
 		case CITYNAME:
 			data = wapi.fetchCurrentWeatherByCityName(results.getArgAt(0));
 			break;
