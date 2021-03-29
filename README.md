@@ -1,5 +1,10 @@
 # cse237-project
 
+## Current State
+The API hookup is 90% functional but needs to fail elegantly when given malformed input.
+Argument parsing only supports retrieving only the current weather for a location, not the forecast. It
+also prints the wrong error messages at times.
+
 ### What user stories were completed this iteration?
 None. Having a bit of a tough time on the pre-requisite steps.
 
