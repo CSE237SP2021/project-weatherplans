@@ -65,8 +65,9 @@ public class menu {
 					usageMessage();
 				}
 			}
+			
 		}
-		if(argIndex == args.length) {
+		if(args.length == 0) {
 			usageMessage();
 		}
 		WeatherApi wapi = new WeatherApi();
