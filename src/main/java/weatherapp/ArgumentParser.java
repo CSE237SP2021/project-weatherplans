@@ -55,10 +55,11 @@ public class ArgumentParser {
 						try {
 							double lat = Double.parseDouble(locArgSplit[0]);
 							double lon = Double.parseDouble(locArgSplit[1]);
-							returnVars.add(locArgSplit[0]);
-							returnVars.add(locArgSplit[1]);
+							ArrayList<Number> returnCoords = new ArrayList<Number>();
+							returnCoords.add(lat);
+							returnCoords.add(lon);
 							results.locType = ApiFetchMethod.COORDINATES;
-							results.arguments = returnVars;
+							results.coords = returnCoords;
 						}catch(NumberFormatException e) {
 							System.err.println("Incorrect format for latitude longitude");
 							usageMessage();
