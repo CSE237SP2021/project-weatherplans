@@ -12,7 +12,35 @@ import weatherapp.ParseResults;
 
 
 class ArgumentParserTest {
-
+	
+	@Test
+	void testParseCityid() {
+		String cityid = "2172797";
+		String[] args = {"-cityid", cityid};
+		ArrayList<String> expectedParsedArg = new ArrayList<String>();
+		expectedParsedArg.add(cityid);
+		
+		ArgumentParser parser = new ArgumentParser();
+		ParseResults results = parser.parse(args);
+		
+		assertEquals(ApiFetchMethod.CITYID,results.locType);
+		assertEquals(expectedParsedArg,results.arguments);
+	}
+	
+	@Test
+	void testParseCityName() {
+		String cityName = "London";
+		String[] args = {"-cityname", cityName};
+		ArrayList<String> expectedParsedArg = new ArrayList<String>();
+		expectedParsedArg.add(cityName);
+		
+		ArgumentParser parser = new ArgumentParser();
+		ParseResults results = parser.parse(args);
+		
+		assertEquals(ApiFetchMethod.CITYNAME,results.locType);
+		assertEquals(expectedParsedArg,results.arguments);
+	}
+	
 	@Test
 	void testParseZip() {
 		String[]testZip = {"-zipcode", "63130"};
@@ -20,6 +48,7 @@ class ArgumentParserTest {
 		correctZip.add("63130");
 		ArgumentParser parser = new ArgumentParser();
 		ParseResults results = parser.parse(testZip);
+		System.out.println(results);
 		assertEquals(ApiFetchMethod.ZIPCODE,results.locType);
 		assertEquals(correctZip,results.arguments);
 	}
