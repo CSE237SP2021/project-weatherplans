@@ -13,7 +13,7 @@ public class menu {
 		switch (results.locType) {
 		case INVALID:
 			System.err.println("No arguments found"); //maybe change this case in the future in case of quick weather forecast retrieval
-      			break;
+      		break;
 		case CITYNAME:
 			data = wapi.fetchCurrentWeatherByCityName(results.getArgAt(0));
 			break;
