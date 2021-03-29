@@ -4,6 +4,7 @@
 The API hookup is 90% functional but needs to fail elegantly when given malformed input.
 Argument parsing only supports retrieving only the current weather for a location, not the forecast. It
 also prints the wrong error messages at times.
+Right now it just dumps the retrieved JSON, not very functional.
 
 ### What user stories were completed this iteration?
 A few. We are having a bit of a tough time on the pre-requisite steps. However, currently we are able parse the arguments on command line to produce a json file that contains weather data for a specified location.
