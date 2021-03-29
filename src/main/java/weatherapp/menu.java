@@ -34,7 +34,7 @@ public class menu {
 								latlong[0]= Double.parseDouble(locArgSplit[0]);
 								latlong[1]= Double.parseDouble(locArgSplit[1]);
 							}
-							else if(locArgSplit[0].matches("\\d+(\\.\\d+)?")){
+							else if(locArgSplit[1].matches("\\d+(\\.\\d+)?")){
 								
 								//zip code variable parse
 								System.out.println("zipcode");
@@ -72,7 +72,7 @@ public class menu {
 	}
 	
 	/**
-	 * Prints the usage message for the program in cases where arguments are met correctly
+	 * Prints the usage message for the program in cases where arguments are not met correctly
 	 */
 	public static void usageMessage() {
 		System.err.println("Usage: menu.java [-l,-location]");
