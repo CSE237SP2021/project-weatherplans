@@ -41,6 +41,10 @@ public class menu {
 								zipcode[0]=locArgSplit[0];
 								zipcode[1]=locArgSplit[1];
 							}
+							else{
+								System.err.println("Incorrect argument format");
+								usageMessage();
+							}
 							
 						}
 						else if(countOccurrence(locArg,',')==0){ //if no comma, then it is city name
