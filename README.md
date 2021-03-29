@@ -6,7 +6,7 @@ Argument parsing only supports retrieving only the current weather for a locatio
 also prints the wrong error messages at times.
 
 ### What user stories were completed this iteration?
-None. Having a bit of a tough time on the pre-requisite steps.
+A few. We are having a bit of a tough time on the pre-requisite steps. However, currently we are able parse the arguments on command line to produce a json file that contains weather data for a specified location.
 
 ### What user stories do you intend to complete next iteration?
 We need to first clean up the current code and hopefully provide a better building method.
