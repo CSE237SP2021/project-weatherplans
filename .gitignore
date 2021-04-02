@@ -11,7 +11,7 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
+# *.jar		-- We will package an executable jar
 *.war
 *.nar
 *.ear
