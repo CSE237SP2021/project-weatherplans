@@ -1,9 +1,8 @@
 package weatherapp;
 
 import org.json.JSONObject;
-import weatherapp.ArgumentParser;
 public class menu {
-
+	//
 	public static void main(String[] args) {
 
 		ArgumentParser parser = new ArgumentParser();
@@ -13,7 +12,7 @@ public class menu {
 		switch (results.locType) {
 		case INVALID:
 			System.err.println("No arguments found"); //maybe change this case in the future in case of quick weather forecast retrieval
-      break;
+      		return;
 		case CITYNAME:
 			data = wapi.fetchCurrentWeatherByCityName(results.getArgAt(0));
 			break;
@@ -21,7 +20,7 @@ public class menu {
 			data = wapi.fetchCurrentWeatherByCityId(results.getArgAt(0));
 			break;
 		case COORDINATES:
-			data = wapi.fetchForecastByCoordinates(results.getCoordAt(0),results.getCoordAt(1));
+			data = wapi.fetchCurrentWeatherByCoordinates(results.getCoordAt(0),results.getCoordAt(1));
 			break;
 		case ZIPCODE:
 			data = wapi.fetchCurrentWeatherByZipcode(results.getArgAt(0));

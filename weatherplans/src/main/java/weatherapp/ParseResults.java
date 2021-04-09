@@ -10,6 +10,10 @@ public class ParseResults {
 	public String getArgAt(int index) {
 		return arguments.get(index);
 	}
+	@Override
+	public String toString() {
+		return "ParseResults [locType=" + locType + ", arguments=" + arguments + ", coords=" + coords + "]";
+	}
 	public Number getCoordAt(int index) {
 		return coords.get(index);
 	}
