@@ -3,68 +3,92 @@ package datadisplay;
 import java.util.ArrayList;
 
 public class TextBox implements Box{
+	private static int borderSize = 1;
 	private static TextContentFormatter tcf = new TextContentFormatter();
 	private ArrayList<String> content;
 	private int topBottomPadding, leftRightPadding;
 	private int width, height;
+	private boolean hasBorder;
+	private TextAlignment alignment;
 	
-	private Character[][] box;
-	
-	public TextBox(ArrayList<String> textContent, int topBottomPadding, int leftRightPadding) {
+	// Border break center alignment currently :(
+	public TextBox(ArrayList<String> textContent, int topBottomPadding, int leftRightPadding, boolean hasBorder) {
 		this.content = new ArrayList<String>(textContent);
 		this.topBottomPadding = topBottomPadding;
 		this.leftRightPadding = leftRightPadding;
+		this.hasBorder = hasBorder;
+		this.alignment = TextAlignment.LEFT_ALIGNED;
 		
-		this.box = this.constructTextBox();
 		this.width = 2 * leftRightPadding + TextBox.getLongestStringLength(textContent);
-		this.height = 2 * topBottomPadding + textContent.size();	
+		this.height = 2 * topBottomPadding + textContent.size();
+		if (this.hasBorder) {
+			this.width += 2 * borderSize;
+			this.height += 2 * borderSize;
+		}
 	}
 	
-	public String[] renderTextLeftAligned() {
+	private String[] getPaddedLeftAlignedBlock() {
 		String[] block = TextBox.tcf.blockifyContent(this.content);
 		String[] paddedBlock = TextBox.tcf.padBlock(block, topBottomPadding, leftRightPadding);
 		return paddedBlock;
 	}
 	
-	public String[] renderTextCenterAligned() {
+	private String[] getPaddedCenterAlignedBlock() {
 		String[] block = TextBox.tcf.centerAlignContent(this.content);
 		String[] paddedBlock = TextBox.tcf.padBlock(block, topBottomPadding, leftRightPadding);
 		return paddedBlock;
 	}
-
-	private Character[][] constructTextBox() {
-		int longestStringLength = TextBox.getLongestStringLength(content);
-		int totalWidth = 2 * this.leftRightPadding + longestStringLength;
-		int totalHeight = 2 * this.topBottomPadding + this.content.size();
+	
+	public String[] getDisplayBlock() {
+		String[] block = null;
+		if (this.alignment == TextAlignment.LEFT_ALIGNED) {
+			block = getPaddedLeftAlignedBlock();
+		} else if (this.alignment == TextAlignment.CENTER_ALIGNED) {
+			block = getPaddedCenterAlignedBlock();
+		} else {
+			throw new RuntimeException("Unrecognized Text Alignment");
+		}
 		
-		Character[][] textBox = new Character[totalHeight][totalWidth];
+		char[][] canvas = constructTextBox(block);
+		
+		String[] result = new String[canvas.length];
+		for (int i = 0; i < canvas.length; i++) {
+			char[] chars = canvas[i];
+			result[i] = new String(chars);
+		}
+		return result;
+	}
+	
+	private char[][] constructTextBox(String[] block) {
+		int totalWidth = block[0].length();
+		int totalHeight = block.length;
+		
+		if (this.hasBorder) {
+			totalWidth += 2 * borderSize;
+			totalHeight += 2 * borderSize;
+		}
+		
+		char[][] textBox = new char[totalHeight][totalWidth];
 		fillTextBoxWithSpaces(textBox);
 		
-		int startingRowIdx = topBottomPadding;
-		int startingColIdx = leftRightPadding;
+		if (this.hasBorder) {
+			fillInTextBoxBorder(textBox);
+		}
+		
+		int startingRowIdx = this.topBottomPadding;
+		int startingColIdx = this.leftRightPadding;
+		
+		if (this.hasBorder) {
+			startingRowIdx += borderSize;
+			startingColIdx += borderSize;
+		}
+		
 		fillInTextBoxContent(textBox, startingRowIdx, startingColIdx);
 		
 		return textBox;
 	}
 	
-//	private Character[][] constructTextBox() {
-//		int longestStringLength = TextBox.getLongestStringLength(textContent);
-//		int borderSize = 1;
-//		int totalWidth = 2 * this.leftRightPadding + longestStringLength + 2 * borderSize;
-//		int totalHeight = 2 * this.topBottomPadding + this.textContent.size() + 2 * borderSize;
-//		
-//		Character[][] textBox = new Character[totalHeight][totalWidth];
-//		fillTextBoxWithSpaces(textBox);
-//		fillInTextBoxBorder(textBox);
-//		
-//		int startingRowIdx = borderSize + topBottomPadding;
-//		int startingColIdx = borderSize + leftRightPadding;
-//		fillInTextBoxContent(textBox, startingRowIdx, startingColIdx);
-//		
-//		return textBox;
-//	}
-	
-	public static void fillTextBoxWithSpaces(Character[][] textBox) {
+	public static void fillTextBoxWithSpaces(char[][] textBox) {
 		for (int i = 0; i < textBox.length; i++) {
 			for (int j = 0; j < textBox[0].length; j++) {
 				textBox[i][j] = ' ';
@@ -72,16 +96,11 @@ public class TextBox implements Box{
 		}
 	}
 	
-	public static void fillInTextBoxBorder(Character[][] textBox) {
-		final char cornerChar = '+';
+	public static void fillInTextBoxBorder(char[][] textBox) {
 		int numCols = textBox[0].length;
 		int numRows = textBox.length;
 		
 		// Fill in corners clockwise, starting from the Top Left (TL).
-//		textBox[0][0] = cornerChar;
-//		textBox[0][numCols - 1] = cornerChar;
-//		textBox[numRows - 1][numCols - 1] = cornerChar;
-//		textBox[numRows - 1][0] = cornerChar;		
 		textBox[0][0] = '┌';
 		textBox[0][numCols - 1] ='┐';
 		textBox[numRows - 1][numCols - 1] = '┘';
@@ -102,7 +121,7 @@ public class TextBox implements Box{
 		}
 	}
 	
-	private void fillInTextBoxContent(Character[][] textBox, int startingRowIdx, int startingColIdx) {
+	private void fillInTextBoxContent(char[][] textBox, int startingRowIdx, int startingColIdx) {
 		int rowIdx = startingRowIdx;
 		int colIdx = startingColIdx;
 		
@@ -126,11 +145,10 @@ public class TextBox implements Box{
 	}
 	
 	public String toString() {
+		String[] block = this.getDisplayBlock();
 		StringBuilder sb = new StringBuilder();
-		for (Character[] characters : box) {
-			for (Character character : characters) {
-				sb.append(character);
-			}
+		for (String line : block) {
+			sb.append(line);
 			sb.append('\n');
 		}
 		return sb.toString();
@@ -168,13 +186,13 @@ public class TextBox implements Box{
 		lines2.add("Yes sir!!!!!!!!!!!!");
 		
 		ArrayList<Box> children = new ArrayList<Box>();
-		TextBox tb = new TextBox(lines, 1, 1);
-		TextBox tb2 = new TextBox(lines2, 1, 1);
+		TextBox tb = new TextBox(lines, 1, 1, true);
+		TextBox tb2 = new TextBox(lines2, 1, 1, true);
 		children.add(tb);
 		children.add(tb2);
 		
 		ParentBox parent = new ParentBox(children, 0, 0);
-//		System.out.println(parent);		
+		System.out.println(parent);		
 		
 	}
 
