@@ -9,4 +9,6 @@ public interface Box {
 	public int getWidth();
 
 	public int getHeight();
+	
+	public String[] getDisplayBlock();
 }
