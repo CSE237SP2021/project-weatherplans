@@ -5,23 +5,22 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 
- * 
- * How content is processed into a display block:
- * content (not block) -> add left/center alignment (block) -> add padding (block) -> add border (block)
- * 
- * A common term used is "block". 
- * Block just means rectangular; Every element in the string array has the same length.
- * 
- * 
+ * A lone Block intended to display some text.
  * @author evan
  *
  */
-public class TextBox extends Box {
+public class TextBlock extends Block {
 	private ArrayList<String> content;
 	private TextAlignment alignment;
 	
-	public TextBox(ArrayList<String> content, int topBottomPadding, int leftRightPadding, boolean hasBorder) {
+	/**
+	 * 
+	 * @param content - the actual text to be displayed
+	 * @param topBottomPadding
+	 * @param leftRightPadding
+	 * @param hasBorder
+	 */
+	public TextBlock(ArrayList<String> content, int topBottomPadding, int leftRightPadding, boolean hasBorder) {
 		super(topBottomPadding, leftRightPadding, hasBorder);
 		this.content = new ArrayList<String>(content);	// Copy the passed list
 		this.alignment = TextAlignment.LEFT_ALIGNED;
@@ -32,7 +31,7 @@ public class TextBox extends Box {
 	
 	@Override
 	protected int calculateWidth() {
-		int totalWidth = 2 * leftRightPadding + this.getLongestLineLength();
+		int totalWidth = 2 * leftRightPadding + this.getLongestContentLineLength();
 		if (this.hasBorder) {
 			totalWidth += 2 * BORDER_SIZE;
 		}
@@ -49,8 +48,8 @@ public class TextBox extends Box {
 	}
 	
 	@Override
-	public String[] toAlignedBlock() {
-		int longestLineLength = this.getLongestLineLength();
+	protected String[] toAlignedBlock() {
+		int longestLineLength = this.getLongestContentLineLength();
 		String[] alignedBlock = new String[this.content.size()];
 		int alignedBlockIdx = 0;
 		
@@ -82,11 +81,11 @@ public class TextBox extends Box {
 	}
 	
 	/**
-	 * Used only to initialize this.width
+	 * Get the longest length line of unprocessed text content.
 	 * @param strings
 	 * @return
 	 */
-	private int getLongestLineLength() {
+	private int getLongestContentLineLength() {
 		int max = this.content.get(0).length();
 		for (String line : this.content) {
 			if (line.length() > max) {
@@ -118,13 +117,13 @@ public class TextBox extends Box {
 		lines2.add("bruh");
 		lines2.add("Yes sir!!!!!!!!!!!!");
 		
-		ArrayList<Box> children = new ArrayList<Box>();
-		TextBox tb = new TextBox(lines, 1, 1, true);
-		TextBox tb2 = new TextBox(lines2, 1, 1, true);
+		ArrayList<Block> children = new ArrayList<Block>();
+		TextBlock tb = new TextBlock(lines, 1, 1, true);
+		TextBlock tb2 = new TextBlock(lines2, 1, 1, true);
 		children.add(tb);
 		children.add(tb2);
 		
-		ParentBox parent = new ParentBox(children, 0, 0);
+		ParentBlock parent = new ParentBlock(children, 0, 0);
 		System.out.println(parent);		
 		
 	}

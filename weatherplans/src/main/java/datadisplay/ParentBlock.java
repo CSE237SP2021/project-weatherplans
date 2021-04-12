@@ -6,18 +6,25 @@ import java.util.StringJoiner;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class ParentBox extends Box {
-	private List<Box> children;
-	private int innerPadding = 1;
+/**
+ * A column of multiple Blocks. 
+ * Only center alignment is implemented.
+ * @author evan
+ *
+ */
+public class ParentBlock extends Block {
+	private List<Block> children;
+	private static int INNER_MARGIN = 1;	// The number of empty lines between child blocks
 	
-	public ParentBox(List<Box> boxes, int topBottomPadding, int leftRightPadding) {
+	public ParentBlock(List<Block> boxes, int topBottomPadding, int leftRightPadding) {
 		super(topBottomPadding, leftRightPadding, true);
-		this.children = new ArrayList<Box>(boxes);
+		this.children = new ArrayList<Block>(boxes);
 		
 		super.width = calculateWidth();
 		super.height = calculateHeight();
 	}
 	
+
 	@Override
 	protected int calculateWidth() {
 		int paddedWidth = 2 * this.leftRightPadding + getLargestChildWidth();
@@ -33,10 +40,11 @@ public class ParentBox extends Box {
 	protected int calculateHeight() {
 		int paddedHeight = 2 * this.topBottomPadding;
 		int totalHeight = paddedHeight;
-		for (Box box : this.children) {
+		for (Block box : this.children) {
 			totalHeight += box.getHeight();
 		}
-		totalHeight += innerPadding * (this.children.size() - 1);
+		totalHeight += INNER_MARGIN * (this.children.size() - 1);
+		
 		if (this.hasBorder) {
 			totalHeight += 2 * BORDER_SIZE;
 		}
@@ -44,24 +52,26 @@ public class ParentBox extends Box {
 	}
 	
 	/**
-	 * Calculate height without outer padding or borders
-	 * @return
+	 * Calculate aligned block height.
+	 * In other words, calculate block height taking only the heights of children
+	 * and and INNER_MARGIN.
 	 */
 	private int calculateAlignedBlockHeight() {
 		int alignedHeight = 0;
-		for (Box box : this.children) {
+		for (Block box : this.children) {
 			alignedHeight += box.getHeight();
 		}
-		alignedHeight += innerPadding * (this.children.size() - 1);
+		alignedHeight += INNER_MARGIN * (this.children.size() - 1);
 		return alignedHeight;
 	}
 	
 	
 	@Override
 	protected String[] toAlignedBlock() {
+		// Center every single child block, with respect to the largest width child block
 		int largestChildWidth = getLargestChildWidth();
 		ArrayList<String[]> alignedChildBlocks = new ArrayList<String[]>();
-		for (Box box : this.children) {
+		for (Block box : this.children) {
 			String[] block = box.getDisplayBlock();
 			for (int i = 0; i < block.length; i++) {
 				String line = block[i];
@@ -81,7 +91,7 @@ public class ParentBox extends Box {
 				alignedBlock[alignedBlockLineNum++] = line;
 			}
 			// Add Inner Padding
-			for (int j = 0; j < this.innerPadding; j++) {
+			for (int j = 0; j < ParentBlock.INNER_MARGIN; j++) {
 				alignedBlock[alignedBlockLineNum++] = createPaddingString(largestChildWidth);
 			}
 		}
@@ -95,9 +105,12 @@ public class ParentBox extends Box {
 		return alignedBlock;
 	}
 	
+	/**
+	 * Returns the width of the child block with the largest width.
+	 */
 	private int getLargestChildWidth() {
 		int largestChildWidth = 0;
-		for (Box box : this.children) {
+		for (Block box : this.children) {
 			if (box.getWidth() > largestChildWidth) {
 				largestChildWidth = box.getWidth();
 			}
@@ -109,7 +122,7 @@ public class ParentBox extends Box {
 		String[] displayBlock = getDisplayBlock();
 		
 		String joinDelimiter = "";
-		for (int i = 0; i < this.innerPadding; i++) {
+		for (int i = 0; i < ParentBlock.INNER_MARGIN; i++) {
 			joinDelimiter += "\n";
 		}
 		
