@@ -2,148 +2,101 @@ package datadisplay;
 
 import java.util.ArrayList;
 
-public class TextBox implements Box{
-	private static int borderSize = 1;
-	private static TextContentFormatter tcf = new TextContentFormatter();
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * 
+ * 
+ * How content is processed into a display block:
+ * content (not block) -> add left/center alignment (block) -> add padding (block) -> add border (block)
+ * 
+ * A common term used is "block". 
+ * Block just means rectangular; Every element in the string array has the same length.
+ * 
+ * 
+ * @author evan
+ *
+ */
+public class TextBox extends Box {
 	private ArrayList<String> content;
-	private int topBottomPadding, leftRightPadding;
-	private int width, height;
-	private boolean hasBorder;
 	private TextAlignment alignment;
 	
-	// Border break center alignment currently :(
-	public TextBox(ArrayList<String> textContent, int topBottomPadding, int leftRightPadding, boolean hasBorder) {
-		this.content = new ArrayList<String>(textContent);
-		this.topBottomPadding = topBottomPadding;
-		this.leftRightPadding = leftRightPadding;
-		this.hasBorder = hasBorder;
+	public TextBox(ArrayList<String> content, int topBottomPadding, int leftRightPadding, boolean hasBorder) {
+		super(topBottomPadding, leftRightPadding, hasBorder);
+		this.content = new ArrayList<String>(content);	// Copy the passed list
 		this.alignment = TextAlignment.LEFT_ALIGNED;
 		
-		this.width = 2 * leftRightPadding + TextBox.getLongestStringLength(textContent);
-		this.height = 2 * topBottomPadding + textContent.size();
+		super.width = calculateWidth();
+		super.height = calculateHeight();
+	}
+	
+	@Override
+	protected int calculateWidth() {
+		int totalWidth = 2 * leftRightPadding + this.getLongestLineLength();
 		if (this.hasBorder) {
-			this.width += 2 * borderSize;
-			this.height += 2 * borderSize;
+			totalWidth += 2 * BORDER_SIZE;
 		}
+		return totalWidth;
 	}
 	
-	private String[] getPaddedLeftAlignedBlock() {
-		String[] block = TextBox.tcf.blockifyContent(this.content);
-		String[] paddedBlock = TextBox.tcf.padBlock(block, topBottomPadding, leftRightPadding);
-		return paddedBlock;
-	}
-	
-	private String[] getPaddedCenterAlignedBlock() {
-		String[] block = TextBox.tcf.centerAlignContent(this.content);
-		String[] paddedBlock = TextBox.tcf.padBlock(block, topBottomPadding, leftRightPadding);
-		return paddedBlock;
-	}
-	
-	public String[] getDisplayBlock() {
-		String[] block = null;
-		if (this.alignment == TextAlignment.LEFT_ALIGNED) {
-			block = getPaddedLeftAlignedBlock();
-		} else if (this.alignment == TextAlignment.CENTER_ALIGNED) {
-			block = getPaddedCenterAlignedBlock();
-		} else {
-			throw new RuntimeException("Unrecognized Text Alignment");
-		}
-		
-		char[][] canvas = constructTextBox(block);
-		
-		String[] result = new String[canvas.length];
-		for (int i = 0; i < canvas.length; i++) {
-			char[] chars = canvas[i];
-			result[i] = new String(chars);
-		}
-		return result;
-	}
-	
-	private char[][] constructTextBox(String[] block) {
-		int totalWidth = block[0].length();
-		int totalHeight = block.length;
-		
+	@Override
+	protected int calculateHeight() {
+		int totalHeight = 2 * topBottomPadding + this.content.size();
 		if (this.hasBorder) {
-			totalWidth += 2 * borderSize;
-			totalHeight += 2 * borderSize;
+			totalHeight += 2 * BORDER_SIZE;
 		}
-		
-		char[][] textBox = new char[totalHeight][totalWidth];
-		fillTextBoxWithSpaces(textBox);
-		
-		if (this.hasBorder) {
-			fillInTextBoxBorder(textBox);
-		}
-		
-		int startingRowIdx = this.topBottomPadding;
-		int startingColIdx = this.leftRightPadding;
-		
-		if (this.hasBorder) {
-			startingRowIdx += borderSize;
-			startingColIdx += borderSize;
-		}
-		
-		fillInTextBoxContent(textBox, startingRowIdx, startingColIdx);
-		
-		return textBox;
+		return totalHeight;
 	}
 	
-	public static void fillTextBoxWithSpaces(char[][] textBox) {
-		for (int i = 0; i < textBox.length; i++) {
-			for (int j = 0; j < textBox[0].length; j++) {
-				textBox[i][j] = ' ';
+	@Override
+	public String[] toAlignedBlock() {
+		int longestLineLength = this.getLongestLineLength();
+		String[] alignedBlock = new String[this.content.size()];
+		int alignedBlockIdx = 0;
+		
+		switch (this.alignment) {
+		case LEFT_ALIGNED:
+			StringBuilder sb = new StringBuilder();
+			for (String line : this.content) {
+				sb.append(line);
+				while (sb.length() < longestLineLength) {
+					sb.append(' ');
+				}
+				alignedBlock[alignedBlockIdx++] = sb.toString();
+				sb.setLength(0);
 			}
+			break;
+			
+		case CENTER_ALIGNED:
+			for (String line : content) {
+				String centeredLine = StringUtils.center(line, longestLineLength);
+				alignedBlock[alignedBlockIdx++] = centeredLine;
+			}
+			break;
+			
+		default:
+			throw new RuntimeException("Unrecognized Text Alignment!");
 		}
+	
+		return alignedBlock;
 	}
 	
-	public static void fillInTextBoxBorder(char[][] textBox) {
-		int numCols = textBox[0].length;
-		int numRows = textBox.length;
-		
-		// Fill in corners clockwise, starting from the Top Left (TL).
-		textBox[0][0] = '┌';
-		textBox[0][numCols - 1] ='┐';
-		textBox[numRows - 1][numCols - 1] = '┘';
-		textBox[numRows - 1][0] = '└';
-		
-		// Fill in the top and bottom border with '-'
-		final char horizontalChar = '─';
-		for (int i = 1; i < numCols - 1; i++) {
-			textBox[0][i] = horizontalChar;					// Top border
-			textBox[numRows - 1][i] = horizontalChar;		// Bottom border
-		}
-		
-		// Fill in the left and right border with '|'
-		final char verticalChar = '│';
-		for (int i = 1; i < numRows - 1; i++) {
-			textBox[i][0] = verticalChar;					// Left border
-			textBox[i][numCols - 1] = verticalChar;			// Right border
-		}
-	}
-	
-	private void fillInTextBoxContent(char[][] textBox, int startingRowIdx, int startingColIdx) {
-		int rowIdx = startingRowIdx;
-		int colIdx = startingColIdx;
-		
+	/**
+	 * Used only to initialize this.width
+	 * @param strings
+	 * @return
+	 */
+	private int getLongestLineLength() {
+		int max = this.content.get(0).length();
 		for (String line : this.content) {
-			for (int i = 0; i < line.length(); i++) {
-				char c = line.charAt(i);
-				textBox[rowIdx][colIdx + i] = c;
-			}
-			rowIdx++;
-		}
-	}
-	
-	private static int getLongestStringLength(ArrayList<String> strings) {
-		int max = strings.get(0).length();
-		for (String string : strings) {
-			if (string.length() > max) {
-				max = string.length();
+			if (line.length() > max) {
+				max = line.length();
 			}
 		}
 		return max;
 	}
 	
+	@Override
 	public String toString() {
 		String[] block = this.getDisplayBlock();
 		StringBuilder sb = new StringBuilder();
@@ -152,26 +105,6 @@ public class TextBox implements Box{
 			sb.append('\n');
 		}
 		return sb.toString();
-	}
-
-	@Override
-	public int getTopBottomPadding() {
-		return topBottomPadding;
-	}
-
-	@Override
-	public int getLeftRightPadding() {
-		return leftRightPadding;
-	}
-	
-	@Override
-	public int getWidth() {
-		return width;
-	}
-
-	@Override
-	public int getHeight() {
-		return height;
 	}
 	
 	public static void main(String[] args) {		
