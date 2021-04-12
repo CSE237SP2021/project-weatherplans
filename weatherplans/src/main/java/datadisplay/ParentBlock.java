@@ -16,10 +16,24 @@ public class ParentBlock extends Block {
 	private List<Block> children;
 	private static int INNER_MARGIN = 1;	// The number of empty lines between child blocks
 	
-	public ParentBlock(List<Block> boxes, int topBottomPadding, int leftRightPadding) {
+	public ParentBlock(List<Block> children, int topBottomPadding, int leftRightPadding) {
 		super(topBottomPadding, leftRightPadding, true);
-		this.children = new ArrayList<Block>(boxes);
+		this.children = new ArrayList<Block>(children);
 		
+		super.width = calculateWidth();
+		super.height = calculateHeight();
+	}
+	
+	public ParentBlock(ArrayList<ArrayList<String>> children, int topBottomPadding, int leftRightPadding) {
+		super(topBottomPadding, leftRightPadding, true);
+		
+		// Convert ArrayList<ArrayList<String>> into an ArrayList<Block>
+		ArrayList<Block> processedChildren = new ArrayList<Block>();
+		for (ArrayList<String> child : children) {
+			Block processedChild = new TextBlock(child, 1, 1, true);
+			processedChildren.add(processedChild);
+		}
+		this.children = processedChildren;
 		super.width = calculateWidth();
 		super.height = calculateHeight();
 	}
