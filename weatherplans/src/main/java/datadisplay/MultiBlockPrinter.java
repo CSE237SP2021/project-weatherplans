@@ -140,6 +140,52 @@ public class MultiBlockPrinter {
 		printBlocks(columns);
 	}
 	
+	public void example2() {
+		ArrayList<String> lines = new ArrayList<String>();
+		lines.add("Hello");
+		lines.add("bruh");
+		lines.add("Yes sir!");
+		
+		ArrayList<String> lines2 = new ArrayList<String>();
+		lines2.add("Hello");
+		lines2.add("bruh");
+		lines2.add("Yes sir!!!!!!!!!!!!");
+		
+		ArrayList<String> lines3 = new ArrayList<String>();
+		lines3.add("Hello");
+		lines3.add("bruh");
+		lines3.add("Yes!");
+		
+		ArrayList<String> lines4 = new ArrayList<String>();
+		lines4.add("Hello");
+
+		
+		ArrayList<Block> children = new ArrayList<Block>();
+		TextBlock tb = new TextBlock(lines, 1, 1, true);
+		TextBlock tb2 = new TextBlock(lines2, 1, 1, true);
+		children.add(tb);
+		children.add(tb2);
+		
+		ArrayList<Block> children2 = new ArrayList<Block>();
+		TextBlock tb3 = new TextBlock(lines3, 1, 1, true);
+		TextBlock tb4 = new TextBlock(lines4, 1, 1, true);
+		children2.add(tb3);
+		children2.add(tb4);
+		
+		
+		ParentBlock parent = new ParentBlock(children, 0, 0);
+		ParentBlock parent2 = new ParentBlock(children2, 0, 0);
+		
+		//
+		ArrayList<Block> boxes = new ArrayList<>();
+		boxes.add(parent);
+		boxes.add(parent2);
+		boxes.add(parent);
+		
+
+		printBlocks(boxes);
+	}
+	
 
 	public static void main(String[] args) {
 		// Initialization
