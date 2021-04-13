@@ -1,8 +1,8 @@
 package weatherapp;
 
 import org.json.JSONObject;
+
 public class menu {
-	//
 	public static void main(String[] args) {
 
 		ArgumentParser parser = new ArgumentParser();
