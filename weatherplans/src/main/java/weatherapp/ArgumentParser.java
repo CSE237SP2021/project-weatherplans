@@ -16,76 +16,125 @@ public class ArgumentParser {
 		String arg;
 		ArrayList<String> returnVars = new ArrayList<String>(); 
 		ParseResults results = new ParseResults();
-		results.locType = ApiFetchMethod.INVALID;
+		results.locType = ApiFetchMethod.EMPTY;
 		while(argIndex < args.length && args[argIndex].startsWith("-")) {
 			arg = args[argIndex++];
 			if(argIndex < args.length) { //for now we only have one potential argument tag, if there is more (which don't accept further arguments), this might be changed
 				String locArg = args[argIndex++];
 				switch(arg) {
 				case "-cityid":
-					try {
-						int cityId = Integer.parseInt(locArg);
-						returnVars.add(locArg);
-						results.locType = ApiFetchMethod.CITYID;
-						results.arguments = returnVars;
-					}catch(NumberFormatException e) {
-						System.err.println("Incorrect format for city id");
-						usageMessage();
-					}
+					results = processId(locArg);
 					break;
 				case "-cityname":
-					returnVars.add(locArg);
-					results.locType = ApiFetchMethod.CITYNAME;
-					results.arguments= returnVars;
+					results = processName(locArg);
 					break;
 				case "-zipcode":
-					try {
-						int zipcode = Integer.parseInt(locArg);
-						returnVars.add(locArg);
-						results.locType = ApiFetchMethod.ZIPCODE;
-						results.arguments = returnVars;
-					}catch(NumberFormatException e) {
-						System.err.println("Incorrect format for city id");
-						usageMessage();
-					}
+					results = processZip(locArg);
 					break;
 				case "-latlong":
-					if(countOccurrence(locArg,',')==1) {
-						String[] locArgSplit = locArg.split(",");
-						try {
-							double lat = Double.parseDouble(locArgSplit[0]);
-							double lon = Double.parseDouble(locArgSplit[1]);
-							ArrayList<Number> returnCoords = new ArrayList<Number>();
-							returnCoords.add(lat);
-							returnCoords.add(lon);
-							results.locType = ApiFetchMethod.COORDINATES;
-							results.coords = returnCoords;
-						}catch(NumberFormatException e) {
-							System.err.println("Incorrect format for latitude longitude");
-							usageMessage();
-						}
-					}
-					else {
-						System.err.println("Incorrect format for latitude longitude");
-						usageMessage();
-					}
+					results = processLatLong(locArg);
 					break;
 				default:
 					System.err.println("Invalid argument tag");
 					break;
 				}
-
-
 			}
 			else {
 				System.err.println("Incorrect number of arguments");
 				usageMessage();
 			}
-
 		}
 		if(args.length == 0) { //this might be removed if we want to add quick weather retrieval
 			usageMessage();
 		}
+		return results;
+	}
+	/**
+	 * 
+	 * @param locArg location argument string
+	 * @return parseresult object that contains all information for api processing
+	 */
+	public ParseResults processId(String locArg) {
+		ParseResults results = new ParseResults();
+		results.locType = ApiFetchMethod.EMPTY;
+		try {
+			int cityId = Integer.parseInt(locArg);
+			ArrayList<String> returnVars = new ArrayList<String>();
+			returnVars.add(locArg);
+			
+			results.locType = ApiFetchMethod.CITYID;
+			results.arguments = returnVars;
+			
+		}
+		catch(NumberFormatException e) {
+			System.err.println("Incorrect format for city id");
+			results.locType = ApiFetchMethod.INVALID;
+			usageMessage();
+		}
+		return results;
+	}
+	/**
+	 * 
+	 * @param locArg location argument string
+	 * @return parseresult object that contains all information for api processing
+	 */
+	public ParseResults processLatLong(String locArg) {
+		ParseResults results = new ParseResults();
+		if(countOccurrence(locArg,',')==1) {
+			String[] locArgSplit = locArg.split(",");
+			try {
+				double lat = Double.parseDouble(locArgSplit[0]);
+				double lon = Double.parseDouble(locArgSplit[1]);
+				ArrayList<Number> returnCoords = new ArrayList<Number>();
+				returnCoords.add(lat);
+				returnCoords.add(lon);
+				results.locType = ApiFetchMethod.COORDINATES;
+				results.coords = returnCoords;
+			}catch(NumberFormatException e) {
+				System.err.println("Incorrect format for latitude longitude");
+				results.locType = ApiFetchMethod.INVALID;
+				usageMessage();
+			}
+		}
+		else {
+			System.err.println("Incorrect format for latitude longitude");
+			results.locType = ApiFetchMethod.INVALID;
+			usageMessage();
+		}
+		return results;
+	}
+	/**
+	 * 
+	 * @param locArg location argument string
+	 * @return parseresult object that contains all information for api processing
+	 */
+	public ParseResults processZip(String locArg) {
+		ParseResults results = new ParseResults();
+		results.locType = ApiFetchMethod.EMPTY;
+		try {
+			int zipcode = Integer.parseInt(locArg);
+			ArrayList<String> returnVars = new ArrayList<String>();
+			returnVars.add(locArg);
+			results.locType = ApiFetchMethod.ZIPCODE;
+			results.arguments = returnVars;
+		}catch(NumberFormatException e) {
+			System.err.println("Incorrect format for city id");
+			results.locType = ApiFetchMethod.INVALID;
+			usageMessage();
+		}
+		return results;
+	}
+	/**
+	 * 
+	 * @param locArg location argument string
+	 * @return parseresult object that contains all information for api processing
+	 */
+	public ParseResults processName(String locArg) {
+		ParseResults results = new ParseResults();
+		ArrayList<String> returnVars = new ArrayList<String>();
+		returnVars.add(locArg);
+		results.locType = ApiFetchMethod.CITYNAME;
+		results.arguments= returnVars;
 		return results;
 	}
 	/**
