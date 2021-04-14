@@ -1,5 +1,8 @@
 # cse237-project
 
+## How to Run
+java -jar weatherplans.jar
+
 ## Current State
 Currently, we are able to correctly parse argument inputs and we have established a viable ascii display system. The JSON data is displayed for the correct location and forecast. However, they are not connected together quite yet in that the json is not being aesthetically displayed.
 
