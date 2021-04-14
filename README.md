@@ -4,7 +4,7 @@
 Currently, we are able to correctly parse argument inputs and we have established a viable ascii display system. The JSON data is displayed for the correct location and forecast. However, they are not connected together quite yet in that the json is not being aesthetically displayed.
 
 ### What user stories were completed this iteration?
-In this iteration we were able to complete a rudimentary ascii text box display system as well as editing the parsing method to conform to clean code guidelines and accept different forecast lengths.
+In this iteration we were able to complete a flexible and generic ascii text box display system as well as editing the parsing method to conform to clean code guidelines and accept different forecast lengths.
 
 ### What user stories do you intend to complete next iteration?
 In the next iteration, we intend to finalize the processing of json data so that we are able to use it in the ascii display system that is printed to the terminal. Also, we still might have to consider locations that are outside of the United States. If a location has a city name that is not unique, we are unsure how the api handles this.
