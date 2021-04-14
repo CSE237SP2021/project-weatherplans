@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import weatherapp.ApiFetchMethod;
 import weatherapp.ArgumentParser;
+import weatherapp.Flag;
 import weatherapp.ParseResults;
 
 
@@ -66,5 +67,15 @@ class ArgumentParserTest {
 		assertEquals(ApiFetchMethod.COORDINATES,results.locType);
 		assertEquals(correctCoord,results.coords);
 	}
-
+	@Test
+	void testMultipleArgs() {
+		String[]testArgs = {"-zipcode", "63130","-extend"};
+		ArrayList<String> correctZip = new ArrayList<String>();
+		correctZip.add("63130");
+		ArgumentParser parser = new ArgumentParser();
+		ParseResults results = parser.parse(testArgs);
+		assertEquals(ApiFetchMethod.ZIPCODE,results.locType);
+		assertTrue(results.containsFlag(Flag.LOCATION));
+		assertTrue(results.containsFlag(Flag.LENGTH));
+	}
 }
