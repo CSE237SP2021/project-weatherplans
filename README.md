@@ -1,8 +1,5 @@
 # cse237-project
 
-## How to Run
-java -jar weatherplans.jar
-
 ## Current State
 Currently, we are able to correctly parse argument inputs and we have established a viable ascii display system. The JSON data is displayed for the correct location and forecast. However, they are not connected together quite yet in that the json is not being aesthetically displayed.
 
@@ -16,15 +13,9 @@ In the next iteration, we intend to finalize the processing of json data so that
 We believe it is mostly functional right now, but testing has not been thorough for the ascii display system
 
 ### What commands are needed to compile and run your code from the command line (or better yet, provide a script that people can use to run your program!)
-1. On GitHub, click the green Code button and copy your preferred cloning method URL to your clipboard.
-2. Using eclipse, go to File > Import. Then under Git, select Projects with Git using smart import.
-3. Open File > Export. Under Java, select Runnable Jar.
-4. Under launch configuration, select menu - weatherplans.
-5. Specify where you would like to export, and click finish. Ignore the warnings.
-6. Within a terminal, enter the directory of the jar file.
-7. Enter the following command to execute the code, assuming your default java version is high enough:
+Enter the following command to execute the code, assuming your default java version is high enough:
 ```
-java -jar executable_name.jar
+java -jar weatherplans.jar
 ```
 At least Java 9 will be required to run the jar.
 
