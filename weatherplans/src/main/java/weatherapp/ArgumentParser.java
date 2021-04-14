@@ -37,7 +37,6 @@ public class ArgumentParser {
 					String locArg = args[argIndex++];
 					flags.add(Flag.LOCATION);
 					results = processLoc(arg,locArg);
-					//if (results.locType==ApiFetchMethod.INVALID) usageMessage();
 				}
 				else {
 					System.err.println("Incorrect number of arguments");
