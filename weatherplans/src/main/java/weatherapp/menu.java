@@ -1,5 +1,6 @@
 package weatherapp;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class menu {
@@ -55,8 +56,8 @@ public class menu {
 				return;
 			}
 		}
-		System.out.println(data.toString(4));
-
+		JsonResults printResult = new JsonResults(data);
+		System.out.println(printResult.toString());
 	}
 
 
