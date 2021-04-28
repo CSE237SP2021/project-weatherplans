@@ -9,8 +9,8 @@ import org.json.JSONObject;
 
 
 public class JsonResults {
-	public enum mainIndex{TEMP,TEMPMIN,HUMIDITY,PRESSURE,FEELSLIKE,TEMPMAX};
-	public enum weatherIndex{OVERALL,DESC};
+	public static enum mainIndex{TEMP,TEMPMIN,HUMIDITY,PRESSURE,FEELSLIKE,TEMPMAX};
+	public static enum weatherIndex{OVERALL,DESC};
 	public String name;
 	public Map<mainIndex,Number> main;
 	public Map<weatherIndex, String> weather;
@@ -19,6 +19,7 @@ public class JsonResults {
 	public ArrayList<Object> forecastMain = new ArrayList<Object>();
 	public ArrayList<Object> forecastWeather = new ArrayList<Object>();
 	public ArrayList<String> forecastTime = new ArrayList<String>();
+	
 	public JsonResults(JSONObject master) {
 		if(master.has("city")) {
 			JSONObject city = (JSONObject) master.get("city");
@@ -82,6 +83,37 @@ public class JsonResults {
 		return !forecastMain.isEmpty();
 	}
 
+	//
+	public ArrayList<String> getMainAsStringList() {
+		ArrayList<String> textContent = new ArrayList<>();
+		for (Map.Entry<mainIndex, Number> entry : this.main.entrySet()) {
+			mainIndex mainEnum = entry.getKey();
+			Number numericVal = entry.getValue();
+			String line = mainEnum.toString() + ": " + numericVal.toString();
+			textContent.add(line);
+		}
+		return textContent;
+	}
+	
+	//
+	public ArrayList<ArrayList<String>> getForecastMainAsListOfLists() {
+		ArrayList<ArrayList<String>> results = new ArrayList<>();
+		
+		for (Object obj : this.forecastMain) {
+			Map<mainIndex, Number> map = (Map<mainIndex, Number>) obj;
+			
+			ArrayList<String> textContent = new ArrayList<>();
+			for (Map.Entry<mainIndex, Number> entry : map.entrySet()) {
+				mainIndex mainEnum = entry.getKey();
+				Number numericVal = entry.getValue();
+				String line = mainEnum.toString() + ": " + numericVal.toString();
+				textContent.add(line);
+			}
+			results.add(textContent);
+		}
+		
+		return results;
+	}
 
 	@Override
 	public String toString() {
