@@ -60,10 +60,7 @@ public class Menu {
 			}
 		}
 		JsonResults printResult = new JsonResults(data);
-		//System.out.println(data.toString(4));
-		//System.out.println(data.get("list").getClass().getName());
 		System.out.println(printResult.toString());
-//		System.out.println(printResult.getWeatherAt(weatherIndex.OVERALL));
 	}
 
 

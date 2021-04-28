@@ -15,6 +15,7 @@ public class JsonResults {
 	public Map<mainIndex,Number> main;
 	public Map<weatherIndex, String> weather;
 	//gosh why can't tuples exist in java
+	//index for forecast goes from 0-39 in 3 hour time segments for a total of 120 hours (5 days)
 	public ArrayList<Object> forecastMain = new ArrayList<Object>();
 	public ArrayList<Object> forecastWeather = new ArrayList<Object>();
 	public ArrayList<String> forecastTime = new ArrayList<String>();
@@ -25,7 +26,6 @@ public class JsonResults {
 			name = (String) city.get("name");
 			for(int i = 0; i< jsonForecast.length(); i++) {
 				JSONObject time = (JSONObject) jsonForecast.get(i);
-				System.out.println("FORECAST INDEX: "+i+" -> "+time.toString(4));
 				forecastMain.add(getMain(time));
 				forecastWeather.add(getWeather(time));
 				forecastTime.add((String) time.get("dt_txt"));
