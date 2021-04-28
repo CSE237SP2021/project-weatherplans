@@ -1,16 +1,16 @@
 # cse237-project
 
 ## Current State
-Currently, we are able to correctly parse argument inputs and we have established a viable ascii display system. The JSON data is displayed for the correct location and forecast. However, they are not connected together quite yet in that the json is not being aesthetically displayed.
+JSON parsing is now hooked up with the command line display. We ran out of time and weren't able to add color or images. 
 
 ### What user stories were completed this iteration?
-In this iteration we were able to complete a flexible and generic ascii text box display system as well as editing the parsing method to conform to clean code guidelines and accept different forecast lengths.
+The program no longer dumps unformatted JSON. We weren't able to make the display very visually pleasing, but it is organized.
 
 ### What user stories do you intend to complete next iteration?
-In the next iteration, we intend to finalize the processing of json data so that we are able to use it in the ascii display system that is printed to the terminal. Also, we still might have to consider locations that are outside of the United States. If a location has a city name that is not unique, we are unsure how the api handles this.
+N/A
 
 ### Is there anything that you implemented but doesn't currently work?
-We believe it is mostly functional right now, but testing has not been thorough for the ascii display system
+The ASCII display gets very wonky if the printed content is wider than the console width. 
 
 ### What commands are needed to compile and run your code from the command line (or better yet, provide a script that people can use to run your program!)
 Enter the following command to execute the code, assuming your default java version is high enough:
