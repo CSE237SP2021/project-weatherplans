@@ -48,7 +48,7 @@ public class JsonResults {
 		mainVals.put(mainIndex.TEMPMIN,(BigDecimal) main.get("temp_min"));
 		mainVals.put(mainIndex.HUMIDITY,(Integer) main.get("humidity"));
 		mainVals.put(mainIndex.PRESSURE,(Integer) main.get("pressure"));
-		mainVals.put(mainIndex.FEELSLIKE,(BigDecimal) main.get("feels_like"));
+		mainVals.put(mainIndex.FEELSLIKE,(Number) main.get("feels_like"));
 		mainVals.put(mainIndex.TEMPMAX,(BigDecimal) main.get("temp_max"));
 		return mainVals;
 	}
