@@ -68,6 +68,16 @@ public class JsonResults {
 	public String getWeatherAt(weatherIndex index) {
 		return weather.get(index);
 	}
+	
+	public Number getForecastMainAt(int timeIndex, mainIndex mIndex) {
+		Map<mainIndex,Number> fmainMap = (Map<weatherapp.JsonResults.mainIndex, Number>) forecastMain.get(timeIndex);
+		return fmainMap.get(mIndex);
+	}
+	
+	public String getForecastWeatherAt(int timeIndex, weatherIndex wIndex) {
+		Map<weatherIndex, String> fweatherMap = (Map<weatherIndex, String>) forecastWeather.get(timeIndex);
+		return fweatherMap.get(wIndex);
+	}
 	public boolean isForecast() {
 		return !forecastMain.isEmpty();
 	}
