@@ -29,6 +29,7 @@ public class JsonResults {
 				forecastMain.add(getMain(time));
 				forecastWeather.add(getWeather(time));
 				forecastTime.add((String) time.get("dt_txt"));
+				
 			}
 		}
 		else {
@@ -61,7 +62,7 @@ public class JsonResults {
 		weatherVals.put(weatherIndex.DESC,(String) weather.get("description"));
 		return weatherVals;
 	}
-
+	
 	public Number getMainAt(mainIndex index) {
 		return main.get(index);
 	}
@@ -78,10 +79,13 @@ public class JsonResults {
 		Map<weatherIndex, String> fweatherMap = (Map<weatherIndex, String>) forecastWeather.get(timeIndex);
 		return fweatherMap.get(wIndex);
 	}
+	public String getForecastTimeAt(int timeIndex) {
+		return forecastTime.get(timeIndex);
+	}
 	public boolean isForecast() {
 		return !forecastMain.isEmpty();
 	}
-
+	
 
 	@Override
 	public String toString() {
