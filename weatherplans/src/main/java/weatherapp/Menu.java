@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import weatherapp.JsonResults.weatherIndex;
 import weatherapp.JsonResults.mainIndex;
 
-public class menu {
+public class Menu {
 	public static void main(String[] args) {
 
 		ArgumentParser parser = new ArgumentParser();
@@ -60,8 +60,10 @@ public class menu {
 			}
 		}
 		JsonResults printResult = new JsonResults(data);
+		//System.out.println(data.toString(4));
+		//System.out.println(data.get("list").getClass().getName());
 		System.out.println(printResult.toString());
-		System.out.println(printResult.getWeatherAt(weatherIndex.OVERALL));
+//		System.out.println(printResult.getWeatherAt(weatherIndex.OVERALL));
 	}
 
 

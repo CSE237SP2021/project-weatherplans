@@ -1,5 +1,6 @@
 package weatherapp;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -13,11 +14,28 @@ public class JsonResults {
 	public String name;
 	public Map<mainIndex,Number> main;
 	public Map<weatherIndex, String> weather;
-	
+	//gosh why can't tuples exist in java
+	public ArrayList<Object> forecastMain = new ArrayList<Object>();
+	public ArrayList<Object> forecastWeather = new ArrayList<Object>();
+	public ArrayList<String> forecastTime = new ArrayList<String>();
 	public JsonResults(JSONObject master) {
-		name = (String) master.get("name");
-		main = getMain(master);
-		weather = getWeather(master);
+		if(master.has("city")) {
+			JSONObject city = (JSONObject) master.get("city");
+			JSONArray jsonForecast = (JSONArray) master.get("list");
+			name = (String) city.get("name");
+			for(int i = 0; i< jsonForecast.length(); i++) {
+				JSONObject time = (JSONObject) jsonForecast.get(i);
+				System.out.println("FORECAST INDEX: "+i+" -> "+time.toString(4));
+				forecastMain.add(getMain(time));
+				forecastWeather.add(getWeather(time));
+				forecastTime.add((String) time.get("dt_txt"));
+			}
+		}
+		else {
+			name = (String) master.get("name");
+			main = getMain(master);
+			weather = getWeather(master);
+		}
 	}
 	
 
@@ -37,7 +55,7 @@ public class JsonResults {
 	//handles weather description
 	private Map<weatherIndex, String> getWeather(JSONObject master){
 		Map<weatherIndex, String>weatherVals = new EnumMap<>(weatherIndex.class);
-		JSONArray transform =  (JSONArray) master.get("weather"); //why is the json object stored in a one long json array bruh
+		JSONArray transform =  (JSONArray) master.get("weather"); //why is the json object stored in a size one json array bruh
 		JSONObject weather = (JSONObject) transform.get(0);
 		weatherVals.put(weatherIndex.OVERALL, (String) weather.get("main"));
 		weatherVals.put(weatherIndex.DESC,(String) weather.get("description"));
@@ -50,11 +68,15 @@ public class JsonResults {
 	public String getWeatherAt(weatherIndex index) {
 		return weather.get(index);
 	}
-	
-	@Override
-	public String toString() {
-		return "JsonResults [name=" + name + ", main=" + main + ", weather=" + weather + "]";
+	public boolean isForecast() {
+		return !forecastMain.isEmpty();
 	}
 
+
+	@Override
+	public String toString() {
+		return "JsonResults [name=" + name + ", main=" + main + ", weather=" + weather + ", forecastMain="
+				+ forecastMain + ", forecastWeather=" + forecastWeather + "]";
+	}
 
 }
