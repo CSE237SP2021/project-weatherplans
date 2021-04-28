@@ -2,7 +2,8 @@ package weatherapp;
 
 import org.json.JSONObject;
 
-public class menu {
+
+public class Menu {
 	public static void main(String[] args) {
 
 		ArgumentParser parser = new ArgumentParser();
@@ -31,6 +32,7 @@ public class menu {
 				ArgumentParser.usageMessage();
 				return;
 			}
+			
 		}
 		else {
 			switch (results.locType) {
@@ -54,8 +56,13 @@ public class menu {
 				ArgumentParser.usageMessage();
 				return;
 			}
+			
+
 		}
-		System.out.println(data.toString(4));
+		JsonResults printResult = new JsonResults(data);
+		printResult.printResults(printResult);
+
+		
 
 	}
 

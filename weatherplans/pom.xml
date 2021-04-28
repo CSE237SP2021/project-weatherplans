@@ -53,7 +53,7 @@
 					<!-- Make this an executable by specifying the class that contains main() -->
 					<archive>
 						<manifest>
-							<mainClass>weatherapp.menu</mainClass>
+							<mainClass>weatherapp.Menu</mainClass>
 						</manifest>
 					</archive>
 
