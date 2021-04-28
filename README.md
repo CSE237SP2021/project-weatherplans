@@ -1,7 +1,7 @@
 # cse237-project
 
 ## Current State
-JSON parsing is now hooked up with the command line display. We ran out of time and weren't able to add color or images. 
+It is functional. JSON parsing is now hooked up with the ASCII display. We weren't able to implement a lot of things like specifying units, colored text, or images to match the weather.
 
 ### What user stories were completed this iteration?
 The program no longer dumps unformatted JSON. We weren't able to make the display very visually pleasing, but it is organized.
