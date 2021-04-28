@@ -106,8 +106,10 @@ public class Menu {
 			printResults(printResult, false);
 
 		}
+
 //		JsonResults printResult = new JsonResults(data);
 //		System.out.println(printResult.toString());
+
 	}
 
 
