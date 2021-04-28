@@ -1,11 +1,15 @@
 package weatherapp;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import datadisplay.Block;
+import datadisplay.MultiBlockPrinter;
+import datadisplay.ParentBlock;
+import datadisplay.TextBlock;
 
 
 public class JsonResults {
@@ -38,19 +42,18 @@ public class JsonResults {
 			weather = getWeather(master);
 		}
 	}
-	
 
 	//if we want to look at more data, we can add more functions
 	//handles main environment data
 	private Map<mainIndex,Number> getMain(JSONObject master){
 		Map<mainIndex,Number>mainVals = new EnumMap<>(mainIndex.class);
 		JSONObject main = (JSONObject) master.get("main");
-		mainVals.put(mainIndex.TEMP,(BigDecimal) main.get("temp"));
-		mainVals.put(mainIndex.TEMPMIN,(BigDecimal) main.get("temp_min"));
-		mainVals.put(mainIndex.HUMIDITY,(Integer) main.get("humidity"));
-		mainVals.put(mainIndex.PRESSURE,(Integer) main.get("pressure"));
+		mainVals.put(mainIndex.TEMP,(Number) main.get("temp"));
+		mainVals.put(mainIndex.TEMPMIN,(Number) main.get("temp_min"));
+		mainVals.put(mainIndex.HUMIDITY,(Number) main.get("humidity"));
+		mainVals.put(mainIndex.PRESSURE,(Number) main.get("pressure"));
 		mainVals.put(mainIndex.FEELSLIKE,(Number) main.get("feels_like"));
-		mainVals.put(mainIndex.TEMPMAX,(BigDecimal) main.get("temp_max"));
+		mainVals.put(mainIndex.TEMPMAX,(Number) main.get("temp_max"));
 		return mainVals;
 	}
 	//handles weather description
@@ -83,7 +86,9 @@ public class JsonResults {
 		return !forecastMain.isEmpty();
 	}
 
-	//
+	/**
+	 * Converts this.main to an ArrayList of strings intended for display
+	 */
 	public ArrayList<String> getMainAsStringList() {
 		ArrayList<String> textContent = new ArrayList<>();
 		for (Map.Entry<mainIndex, Number> entry : this.main.entrySet()) {
@@ -95,7 +100,9 @@ public class JsonResults {
 		return textContent;
 	}
 	
-	//
+	/**
+	 * Converts this.forecastMain to a 2-D ArrayList of strings for display
+	 */
 	public ArrayList<ArrayList<String>> getForecastMainAsListOfLists() {
 		ArrayList<ArrayList<String>> results = new ArrayList<>();
 		
@@ -113,6 +120,66 @@ public class JsonResults {
 		}
 		
 		return results;
+	}
+	
+	public void printResults(JsonResults results) {
+		ArrayList<Block> columns = new ArrayList<Block>();
+		
+		// Populate columns
+		if (this.isForecast()) {
+			
+			ArrayList<ArrayList<String>> multiTextContent = results.getForecastMainAsListOfLists();
+			
+			// We only sample every 8th data point b/c crunch time
+			for (int i = 0; i < multiTextContent.size(); i += 8) {
+				// Add title
+				ArrayList<String> titleContent = new ArrayList<>();
+				String timeStr = this.forecastTime.get(i);
+				titleContent.add(timeStr);
+				
+				// Add weather description
+				ArrayList<String> textContent = new ArrayList<>();
+				Map<weatherIndex, String> currentWeather = (Map<weatherIndex, String>)this.forecastWeather.get(i);
+				textContent.add(currentWeather.get(weatherIndex.DESC));
+				textContent.add("");
+				
+				// Add main content
+				ArrayList<String> mainContent = multiTextContent.get(i);
+				textContent.addAll(mainContent);
+				ParentBlock column = constructParentBlock(titleContent, textContent);
+				columns.add(column);
+				
+			}
+			
+			
+		} else {
+			// Add title
+			ArrayList<String> titleContent = new ArrayList<>();
+			titleContent.add("Today");
+			
+			// Add weather description
+			ArrayList<String> textContent = new ArrayList<>();
+			textContent.add(this.weather.get(weatherIndex.DESC));
+			textContent.add("");
+			
+			// Add main content
+			ArrayList<String> mainContent = results.getMainAsStringList();
+			textContent.addAll(mainContent); 
+			ParentBlock column = constructParentBlock(titleContent, textContent);
+			columns.add(column);
+		}
+		
+		// And print the columns
+		MultiBlockPrinter.printBlocks(columns);
+	}
+	
+	private static ParentBlock constructParentBlock(ArrayList<String> titleContent, ArrayList<String> textContent) {
+		ArrayList<Block> children = new ArrayList<Block>();
+		children.add(new TextBlock(titleContent, 1, 1, true));
+		children.add(new TextBlock(textContent, 1, 1, true));
+		
+		ParentBlock column = new ParentBlock(children, 0, 0);
+		return column;
 	}
 
 	@Override

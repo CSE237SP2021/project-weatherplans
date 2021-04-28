@@ -1,51 +1,9 @@
 package weatherapp;
 
-import java.util.ArrayList;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import datadisplay.Block;
-import datadisplay.MultiBlockPrinter;
-import datadisplay.ParentBlock;
-import datadisplay.TextBlock;
-import weatherapp.JsonResults.weatherIndex;
-import weatherapp.JsonResults.mainIndex;
 
 public class Menu {
-	public static void printResults(JsonResults results, boolean isForecast) {
-		ArrayList<Block> columns = new ArrayList<Block>();
-		
-		// Populate columns
-		if (isForecast) {
-			ArrayList<ArrayList<String>> multiTextContent = results.getForecastMainAsListOfLists();
-			for (ArrayList<String> textContent : multiTextContent) {
-				ParentBlock column = constructParentBlock("Wednesday", textContent);
-				columns.add(column);
-			}
-			
-		} else {
-			ArrayList<String> textContent = results.getMainAsStringList();
-			ParentBlock column = constructParentBlock("Wednesday", textContent);
-			columns.add(column);
-		}
-		
-		// And print the columns
-		MultiBlockPrinter.printBlocks(columns);
-	}
-	
-	public static ParentBlock constructParentBlock(String titleText, ArrayList<String> textContent) {
-		ArrayList<String> title = new ArrayList<>();
-		title.add(titleText);
-		
-		ArrayList<Block> children = new ArrayList<Block>();
-		children.add(new TextBlock(title, 1, 1, true));
-		children.add(new TextBlock(textContent, 1, 1, true));
-		
-		ParentBlock column = new ParentBlock(children, 0, 0);
-		return column;
-	}
-	
 	public static void main(String[] args) {
 
 		ArgumentParser parser = new ArgumentParser();
@@ -75,10 +33,6 @@ public class Menu {
 				return;
 			}
 			
-			// Convert results to array list of strings
-			JsonResults printResult = new JsonResults(data);
-			System.out.println(printResult.toString());
-
 		}
 		else {
 			switch (results.locType) {
@@ -102,13 +56,13 @@ public class Menu {
 				ArgumentParser.usageMessage();
 				return;
 			}
-			JsonResults printResult = new JsonResults(data);
-			printResults(printResult, false);
+			
 
 		}
+		JsonResults printResult = new JsonResults(data);
+		printResult.printResults(printResult);
 
-//		JsonResults printResult = new JsonResults(data);
-//		System.out.println(printResult.toString());
+		
 
 	}
 

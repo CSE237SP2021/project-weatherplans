@@ -104,7 +104,9 @@ public class WeatherApi {
 			throw new IllegalArgumentException("Unexpected value: " + fetchMethod);
 		}
 		
+		url += "&units=imperial";
 		url = appendApiKey(url);
+		
 		return url;
 	}
 	
